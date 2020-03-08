@@ -67,3 +67,27 @@ def test_normalization_rules_work():
     assert (v.normalized(document) == expected_document)
     assert (v.errors == {})
 
+
+def test_normalization_rules_work_no_validator_init():
+    document = {
+        'list_of_values': [
+            'test1',
+            600,
+            [None, '1', 2, {'field1': 'testfield', 'field2': 5, 'field3': 'purge_me'}],
+        ],
+        'list_of_values_2': {'1': 'test1', '2': 501, '3': ['test2', 1, 2, 55]},
+        'list_of_values_3': ['test10', 600, 'test11']
+    }
+    expected_document = {
+        'list_of_values': [
+            'test1',
+            600,
+            ['test_default', 1, 2, {'field1': 'testfield', 'field2': 5}],
+        ],
+        'list_of_values_2': {'1': 'test1', '2': 501, '3': ['test2', 1, 2, 55]},
+        'list_of_values_3': ['test10', 600, 'test11']
+    }
+    v = Validator(purge_unknown=True)
+    assert (v.normalized(document, extended_dict_schema) == expected_document)
+    assert (v.errors == {})
+

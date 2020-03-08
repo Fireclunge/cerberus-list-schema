@@ -6,6 +6,10 @@ from cerberus import (
 from munch import DefaultMunch
 
 
+class DummyClass:
+    pass
+
+
 class Validator(CerberusValidator):
     _is_list_schema = None
 
@@ -37,6 +41,15 @@ class Validator(CerberusValidator):
 
     def _iterate_list_for_rename(self, array, current_schema):
 
+        def _validate_valid_name_rule(new_name):
+            # to test of setattr can work converting dicts to objects. is 'name' rule valid
+            dummy = DummyClass
+            setattr(dummy, new_name, 'test_value')
+            try:
+                eval("dummy.{0}".format(new_name))
+            except SyntaxError:
+                raise ValueError('`name` rule (`{0}`) in provided schema is not valid. '
+                                 'Make sure it is a valid name for a python variable.'.format(new_name))
         def _get_node_schema(k):
             if isinstance(array, dict):
                 return current_schema['schema'].get(k, {})
@@ -51,6 +64,7 @@ class Validator(CerberusValidator):
                 v = self._iterate_list_for_rename(v, new_schema)
             new_name = new_schema.get('name')
             if new_name is not None:
+                _validate_valid_name_rule(new_name)
                 new_dict[new_name] = v
                 indexes_to_pop.append(k)
             else:
@@ -108,6 +122,7 @@ class Validator(CerberusValidator):
 
     def __init__(self, *args, **kwargs):
         if len(args) > 0:
+            self._original_schema = deepcopy(args[0])
             args = self._parse_schema_in_args(args)
 
         super(Validator, self).__init__(*args, **kwargs)
@@ -148,9 +163,10 @@ class Validator(CerberusValidator):
         See normalized method doctring for more information such as expected parameters
         """
         normalized_document = deepcopy(self.normalized(document, schema, always_return_document))
-        schema = deepcopy(self.schema)
-        if isinstance(schema.schema, dict):
-            schema = {'schema': schema.schema}
+        if schema is None:
+            schema = self._original_schema
+        if isinstance(document, dict):
+            schema = {'schema': schema}
         return self._iterate_list_for_rename(normalized_document, schema)
 
     def normalized_as_object(self, document, schema=None, always_return_document=False):
