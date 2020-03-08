@@ -131,7 +131,16 @@ class Validator(CerberusValidator):
         return super(Validator, self).validate(document, schema, update, normalize)
 
     def normalized(self, document, schema=None, always_return_document=False):
-        return super(Validator, self).normalized(document, schema, always_return_document)
+
+        if schema is not None:
+            schema = self._check_for_list_schema(schema)
+        else:
+            schema = self._schema
+        if self._is_list_schema:
+            document = self._parse_list_document(document)
+            return super(Validator, self).normalized(document, schema, always_return_document)['_schema']
+        else:
+            return super(Validator, self).normalized(document, schema, always_return_document)
 
     def normalized_as_dict(self, document, schema=None, always_return_document=False):
         """ Returns normalized() dictionary but converts list objects to dict schema

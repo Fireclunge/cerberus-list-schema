@@ -248,6 +248,38 @@ def test_extended_dict_validation_too_many_fields_raise():
     assert (v.errors == {'list_of_values_2': [{'3': [{4: ['unknown field']}]}]})
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+
+def test_extended_list_validation_works_no_schema_init():
+    document = [
+        ['test1', 501, ['test2', 1, 2, 55]],
+        600,
+        ['test3', 1, 2, {'field1': 'testfield', 'field2': 5}],
+        ['test10', 600, 'test11']
+    ]
+    v = Validator()
+    assert (v.validate(document, extended_list_schema) is True)
+    assert (v.errors == {})
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+def test_extended_dict_validation_works_no_schema_init():
+    document = {
+        'list_of_values': [
+            'test1',
+            600,
+            ['test3', 1, 2, {'field1': 'testfield', 'field2': 5}],
+        ],
+        'list_of_values_2': {'1': 'test1', '2': 501, '3': ['test2', 1, 2, 55]},
+        'list_of_values_3': ['test10', 600, 'test11']
+    }
+    v = Validator()
+    print(v.errors)
+    assert (v.validate(document, extended_dict_schema) is True)
+    assert (v.errors == {})
+
+
 """
 if __name__ == '__main__':
 

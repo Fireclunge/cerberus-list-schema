@@ -38,8 +38,8 @@ extended_dict_schema = {
             {'type': 'integer', 'min': 500},
             {'type': 'list',
              'items': [
-                 {'type': 'string'},
-                 {'type': 'integer'},
+                 {'type': 'string', 'default': 'test_default'},
+                 {'type': 'integer', 'coerce': int},
                  {'type': 'integer', 'name': 'hi'},
                  {'type': 'dict',
                   'schema': {
