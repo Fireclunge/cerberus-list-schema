@@ -18,7 +18,7 @@ other_schema = {
         {'type': 'list',
          'items': [
              {'type': 'string'},
-             {'type': 'integer', 'name': '2nd int'},
+             {'type': 'integer', 'name': 'second_int'},
              {'type': 'integer'},
              {'type': 'integer', 'min': 50},
          ]

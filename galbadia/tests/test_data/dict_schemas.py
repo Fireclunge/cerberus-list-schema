@@ -21,7 +21,7 @@ other_schema = {
         '3': {'type': 'list',
               'items': [
                   {'type': 'string'},
-                  {'type': 'integer', 'name': '2nd int'},
+                  {'type': 'integer', 'name': 'second_int'},
                   {'type': 'integer'},
                   {'type': 'integer', 'min': 50},
               ]
@@ -32,7 +32,7 @@ other_schema = {
 extended_dict_schema = {
     'list_of_values': {
         'type': 'list',
-        'name': 'hello',
+        'name': 'first_val',
         'items': [
             {'type': 'string'},
             {'type': 'integer', 'min': 500},

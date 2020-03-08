@@ -12,6 +12,7 @@ class DummyClass:
 
 class Validator(CerberusValidator):
     _is_list_schema = None
+    _allow_name_conflicts = False
 
     @staticmethod
     def _parse_list_document(document):
@@ -59,13 +60,16 @@ class Validator(CerberusValidator):
                 except IndexError:
                     return {}
 
-        def _replace_values(k, v):
+        def _replace_values(k, v, allow_name_conflicts=False):
             if isinstance(v, dict) or isinstance(v, list):
                 v = self._iterate_list_for_rename(v, new_schema)
             new_name = new_schema.get('name')
             if new_name is not None:
                 _validate_valid_name_rule(new_name)
-                new_dict[new_name] = v
+                if new_dict.get(new_name) is not None and allow_name_conflicts is False:
+                    raise AttributeError('`name` rule (`{0}`) already in use by another field'.format(new_name))
+                else:
+                    new_dict[new_name] = v
                 indexes_to_pop.append(k)
             else:
                 new_dict[k] = v
@@ -76,7 +80,7 @@ class Validator(CerberusValidator):
         if isinstance(array, list):
             for key, value in enumerate(array):
                 new_schema = _get_node_schema(key)
-                _replace_values(key, value)
+                _replace_values(key, value, self._allow_name_conflicts)
 
             indexes_to_pop.sort(reverse=True)
             for index in indexes_to_pop:
@@ -85,7 +89,7 @@ class Validator(CerberusValidator):
         elif isinstance(array, dict):
             for key, value in array.items():
                 new_schema = _get_node_schema(key)
-                _replace_values(key, value)
+                _replace_values(key, value, self._allow_name_conflicts)
 
             for key in indexes_to_pop:
                 del array[key]
@@ -157,7 +161,7 @@ class Validator(CerberusValidator):
         else:
             return super(Validator, self).normalized(document, schema, always_return_document)
 
-    def normalized_as_dict(self, document, schema=None, always_return_document=False):
+    def normalized_as_dict(self, document, schema=None, always_return_document=False, allow_name_conflicts=False):
         """ Returns normalized() dictionary but converts list objects to dict schema
 
         See normalized method doctring for more information such as expected parameters
@@ -167,6 +171,7 @@ class Validator(CerberusValidator):
             schema = self._original_schema
         if isinstance(document, dict):
             schema = {'schema': schema}
+        self._allow_name_conflicts = allow_name_conflicts
         return self._iterate_list_for_rename(normalized_document, schema)
 
     def normalized_as_object(self, document, schema=None, always_return_document=False):
