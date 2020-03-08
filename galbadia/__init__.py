@@ -51,6 +51,7 @@ class Validator(CerberusValidator):
             except SyntaxError:
                 raise ValueError('`name` rule (`{0}`) in provided schema is not valid. '
                                  'Make sure it is a valid name for a python variable.'.format(new_name))
+
         def _get_node_schema(k):
             if isinstance(array, dict):
                 return current_schema['schema'].get(k, {})
@@ -165,7 +166,12 @@ class Validator(CerberusValidator):
         """ Returns normalized() dictionary but converts list objects to dict schema
 
         See normalized method doctring for more information such as expected parameters
+
+        :param allow_name_conflicts: Set to True to allow dictionary keys to be overwriten by already existing keys
+               when using the `name` rule. If set to False and exception will be raised.
+        :type allow_name_conflicts: :class:`bool`
         """
+
         normalized_document = deepcopy(self.normalized(document, schema, always_return_document))
         if schema is None:
             schema = self._original_schema
