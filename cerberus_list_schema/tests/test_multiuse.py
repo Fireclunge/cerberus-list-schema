@@ -11,7 +11,6 @@ def test_multiuse_validation_works():
     v = Validator(schema, allow_list_missing=True)
 
     for i in range(3):
-
         # -------------------------------------------------------------------------------------------------------
         expected_value = {'list_of_values': [{2: [{3: [{'field3': ['unknown field']}]}]}],
                           'list_of_values_2': [{2: [{3: ['min value is 50'], 4: ['unknown field']}]}]}
@@ -37,11 +36,11 @@ def test_multiuse_validation_works():
         a = v.normalized_as_object(document)
         b = v.normalized_as_object(document, schema)
 
-        assert(a.hello[2].hi == 4)
-        assert(b.hello[2].hi == 4)
+        assert (a.hello[2].hi == 4)
+        assert (b.hello[2].hi == 4)
 
-        assert(a.list_of_values_2[2].nd_int == 1)
-        assert(a.list_of_values_2[2].nd_int == 1)
+        assert (a.list_of_values_2[2].nd_int == 1)
+        assert (a.list_of_values_2[2].nd_int == 1)
 
-        assert(a.list_of_values_2[2][2] == 5434)
-        assert(a.list_of_values_2[2][2] == 5434)
+        assert (a.list_of_values_2[2][2] == 5434)
+        assert (a.list_of_values_2[2][2] == 5434)

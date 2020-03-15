@@ -1,4 +1,5 @@
 from copy import deepcopy
+
 from cerberus import (
     Validator as CerberusValidator,
     errors
@@ -178,7 +179,8 @@ class Validator(CerberusValidator):
         else:
             return super(Validator, self).normalized(document, schema, always_return_document)
 
-    def normalized_as_dict(self, document, schema=None, always_return_document=False, allow_name_conflicts=False, callable_numbers=False):
+    def normalized_as_dict(self, document, schema=None, always_return_document=False, allow_name_conflicts=False,
+                           callable_numbers=False):
         """ Returns normalized() dictionary but converts list objects to dict schema
 
         See normalized method doctring for more information such as expected parameters
@@ -197,7 +199,8 @@ class Validator(CerberusValidator):
         self._callable_numbers = callable_numbers
         return self._iterate_list_for_rename(normalized_document, schema)
 
-    def normalized_as_object(self, document, schema=None, always_return_document=False, allow_name_conflicts=False, callable_numbers=False):
+    def normalized_as_object(self, document, schema=None, always_return_document=False, allow_name_conflicts=False,
+                             callable_numbers=False):
         """ Returns normalized_as_dict() as an object with keys callable.
 
         See normalized method doctring for more information such as expected parameters

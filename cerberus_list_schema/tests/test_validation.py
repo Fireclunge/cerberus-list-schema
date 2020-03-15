@@ -1,6 +1,6 @@
 from cerberus_list_schema import Validator
-from cerberus_list_schema.tests.test_data.list_schemas import simple_list_schema, extended_list_schema
 from cerberus_list_schema.tests.test_data.dict_schemas import simple_dict_schema, extended_dict_schema
+from cerberus_list_schema.tests.test_data.list_schemas import simple_list_schema, extended_list_schema
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -186,7 +186,8 @@ def test_extended_dict_validation_min_number_not_compliant():
     }
     v = Validator(extended_dict_schema)
     assert (v.validate(document) is False)
-    assert (v.errors == {'list_of_values_2': [{'2': ['min value is 500'], '3': ['length of list should be 4, it is 5']}]})
+    assert (v.errors == {
+        'list_of_values_2': [{'2': ['min value is 500'], '3': ['length of list should be 4, it is 5']}]})
 
 
 def test_extended_dict_validation_list_len_breaks():
@@ -230,7 +231,8 @@ def test_extended_list_validation_too_many_fields_raise():
     ]
     v = Validator(extended_list_schema)
     assert (v.validate(document) is False)
-    assert (v.errors == {'_schema': [{2: [{3: [{'field3': ['unknown field']}]}], 3: ['length of list should be 3, it is 2']}]})
+    assert (v.errors == {
+        '_schema': [{2: [{3: [{'field3': ['unknown field']}]}], 3: ['length of list should be 3, it is 2']}]})
 
 
 def test_extended_dict_validation_too_many_fields_raise():

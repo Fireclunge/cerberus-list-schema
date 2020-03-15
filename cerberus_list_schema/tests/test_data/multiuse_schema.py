@@ -26,7 +26,8 @@ schema = {
                  {'type': 'string'},
                  {'type': 'integer'},
                  {'type': 'integer', 'name': 'hi'},
-                 {'type': 'dict', 'schema': {'field1': {'type': 'string', 'name': 'field01231'}, 'field2': {'type': 'integer'}}}
+                 {'type': 'dict',
+                  'schema': {'field1': {'type': 'string', 'name': 'field01231'}, 'field2': {'type': 'integer'}}}
              ]
              }
         ]
