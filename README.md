@@ -1,4 +1,4 @@
-# GalbaCerberus List Schemadia
+# Cerberus List Schemadia
 Cerberus List Schema is a Cerberus based validation library with extended methods to support list schemas. 
 
 - List transposition to dict format according to schema
