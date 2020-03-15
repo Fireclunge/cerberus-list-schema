@@ -11,8 +11,9 @@ class DummyClass:
 
 
 class Validator(CerberusValidator):
-    _is_list_schema = None
-    _allow_name_conflicts = False
+    _is_list_schema: bool = None
+    _allow_name_conflicts: bool = None
+    _callable_numbers: bool = None
 
     @staticmethod
     def _parse_list_document(document):
@@ -47,6 +48,14 @@ class Validator(CerberusValidator):
             dummy = DummyClass
             setattr(dummy, new_name, 'test_value')
             try:
+                int(str(new_name)[0])
+            except ValueError:
+                pass
+            else:
+                raise ValueError('`name` rule (`{0}`) in provided schema is not valid as it begins with a number. '
+                                 'Make sure it is a valid name for a python variable.'.format(new_name))
+
+            try:
                 eval("dummy.{0}".format(new_name))
             except SyntaxError:
                 raise ValueError('`name` rule (`{0}`) in provided schema is not valid. '
@@ -61,7 +70,7 @@ class Validator(CerberusValidator):
                 except IndexError:
                     return {}
 
-        def _replace_values(k, v, allow_name_conflicts=False):
+        def _replace_values(k, v, allow_name_conflicts=False, callable_numbers=False):
             if isinstance(v, dict) or isinstance(v, list):
                 v = self._iterate_list_for_rename(v, new_schema)
             new_name = new_schema.get('name')
@@ -73,6 +82,13 @@ class Validator(CerberusValidator):
                     new_dict[new_name] = v
                 indexes_to_pop.append(k)
             else:
+                if callable_numbers is True:
+                    if isinstance(k, int) or isinstance(k, float):
+                        k = '_{k}'.format(k=k)
+                    try:
+                        _validate_valid_name_rule(k)
+                    except ValueError:
+                        k = '_{k}'.format(k=k)
                 new_dict[k] = v
 
         new_dict = dict()
@@ -81,7 +97,7 @@ class Validator(CerberusValidator):
         if isinstance(array, list):
             for key, value in enumerate(array):
                 new_schema = _get_node_schema(key)
-                _replace_values(key, value, self._allow_name_conflicts)
+                _replace_values(key, value, self._allow_name_conflicts, self._callable_numbers)
 
             indexes_to_pop.sort(reverse=True)
             for index in indexes_to_pop:
@@ -90,7 +106,7 @@ class Validator(CerberusValidator):
         elif isinstance(array, dict):
             for key, value in array.items():
                 new_schema = _get_node_schema(key)
-                _replace_values(key, value, self._allow_name_conflicts)
+                _replace_values(key, value, self._allow_name_conflicts, self._callable_numbers)
 
             for key in indexes_to_pop:
                 del array[key]
@@ -162,7 +178,7 @@ class Validator(CerberusValidator):
         else:
             return super(Validator, self).normalized(document, schema, always_return_document)
 
-    def normalized_as_dict(self, document, schema=None, always_return_document=False, allow_name_conflicts=False):
+    def normalized_as_dict(self, document, schema=None, always_return_document=False, allow_name_conflicts=False, callable_numbers=False):
         """ Returns normalized() dictionary but converts list objects to dict schema
 
         See normalized method doctring for more information such as expected parameters
@@ -178,11 +194,14 @@ class Validator(CerberusValidator):
         if isinstance(document, dict):
             schema = {'schema': schema}
         self._allow_name_conflicts = allow_name_conflicts
+        self._callable_numbers = callable_numbers
         return self._iterate_list_for_rename(normalized_document, schema)
 
-    def normalized_as_object(self, document, schema=None, always_return_document=False):
+    def normalized_as_object(self, document, schema=None, always_return_document=False, allow_name_conflicts=False, callable_numbers=False):
         """ Returns normalized_as_dict() as an object with keys callable.
 
         See normalized method doctring for more information such as expected parameters
         """
-        return DefaultMunch.fromDict(self.normalized_as_dict(document, schema, always_return_document))
+        return DefaultMunch.fromDict(
+            self.normalized_as_dict(document, schema, always_return_document, allow_name_conflicts, callable_numbers)
+        )
