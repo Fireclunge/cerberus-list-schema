@@ -1,5 +1,5 @@
-from galbadia import Validator
-from galbadia.tests.test_data.multiuse_schema import schema
+from cerberus_list_schema import Validator
+from cerberus_list_schema.tests.test_data.multiuse_schema import schema
 
 
 def test_multiuse_validation_works():

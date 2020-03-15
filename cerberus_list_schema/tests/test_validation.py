@@ -1,6 +1,6 @@
-from galbadia import Validator
-from galbadia.tests.test_data.list_schemas import simple_list_schema, extended_list_schema
-from galbadia.tests.test_data.dict_schemas import simple_dict_schema, extended_dict_schema
+from cerberus_list_schema import Validator
+from cerberus_list_schema.tests.test_data.list_schemas import simple_list_schema, extended_list_schema
+from cerberus_list_schema.tests.test_data.dict_schemas import simple_dict_schema, extended_dict_schema
 
 
 # ----------------------------------------------------------------------------------------------------------------------
