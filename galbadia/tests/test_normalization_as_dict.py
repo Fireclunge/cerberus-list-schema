@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 
 from galbadia import Validator
@@ -65,8 +67,11 @@ def test_conflicting_dict_name_fails():
         'list_of_values_2': {'1': 'test1', '2': 501, '3': ['test2', 1, 2, 55]},
         'list_of_values_3': ['test10', 600, 'test11']
     }
-    extended_dict_schema['list_of_values']['name'] = 'hello'
-    v = Validator(extended_dict_schema)
+
+    dict_schema = deepcopy(extended_dict_schema)
+
+    dict_schema['list_of_values']['name'] = 'hello'
+    v = Validator(dict_schema)
     with pytest.raises(AttributeError):
         v.normalized_as_dict(document)
 
