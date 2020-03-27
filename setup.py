@@ -4,19 +4,20 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="example-pkg-YOUR-USERNAME-HERE", # Replace with your own username
-    version="0.0.1",
-    author="Example Author",
-    author_email="author@example.com",
-    description="A small example package",
+    name="cerberus-list-schema-firepubes",
+    version="1.0",
+    author="Amy Summers",
+    author_email="amy@sakuradigpython3 -m pip install --user --upgrade twineital.co.uk",
+    description="Cerburus based validation extended to support list schemas and "
+                "list transposition to dictionary and python objects",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/Firepubes/cerberus-list-schema",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.4',
 )
