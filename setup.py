@@ -7,7 +7,7 @@ setuptools.setup(
     name="cerberus-list-schema-firepubes",
     version="1.0",
     author="Amy Summers",
-    author_email="amy@sakuradigpython3 -m pip install --user --upgrade twineital.co.uk",
+    author_email="amy@sakuradigital.co.uk",
     description="Cerburus based validation extended to support list schemas and "
                 "list transposition to dictionary and python objects",
     long_description=long_description,
