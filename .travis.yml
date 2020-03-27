@@ -16,5 +16,7 @@ matrix:
         - python: 3.8
           dist: xenial
           sudo: true
+install:
+  - pip install cerberus munch
 script:
   - pytest
