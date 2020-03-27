@@ -12,9 +12,9 @@ class DummyClass:
 
 
 class Validator(CerberusValidator):
-    _is_list_schema: bool = None
-    _allow_name_conflicts: bool = None
-    _callable_numbers: bool = None
+    _is_list_schema = None
+    _allow_name_conflicts = None
+    _callable_numbers = None
 
     @staticmethod
     def _parse_list_document(document):
