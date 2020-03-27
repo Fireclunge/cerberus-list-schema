@@ -1,5 +1,5 @@
 from cerberus_list_schema import Validator
-from cerberus_list_schema.tests.test_data.multiuse_schema import schema
+from cerberus_list_schema.tests.test_data.utils import get_multiuse_schema
 
 
 def test_multiuse_validation_works():
@@ -11,6 +11,7 @@ def test_multiuse_validation_works():
         ],
         "list_of_values_2": ["fd", 1000, ["sfsdf", 1, 5434, 4, 4]],
     }
+    schema = get_multiuse_schema()
 
     v = Validator(schema, allow_list_missing=True)
 
