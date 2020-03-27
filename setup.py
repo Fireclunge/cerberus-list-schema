@@ -19,6 +19,7 @@ setuptools.setup(
         'cerberus',
         'munch',
     ],
+    keywords=["validation", "schema", "dictionaries", "normalization", "list", "array", "cerberus", "object"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
