@@ -1,3 +1,4 @@
+import sys
 from copy import deepcopy
 
 import pytest
@@ -96,12 +97,25 @@ def test_conflicting_dict_name_fails():
     with pytest.raises(AttributeError):
         v.normalized_as_dict(document)
 
-    assert v.normalized_as_dict(document, allow_name_conflicts=True) == {
-        "list_of_values_2": {
-            "1": "test1",
-            "2": 501,
-            "3": {0: "test2", "second_int": 1, 2: 2, 3: 55},
-        },
-        "hello": {0: "test10", 1: 600, 2: "test11"},
-    }
+    try:
+        assert v.normalized_as_dict(document, allow_name_conflicts=True) == {
+            "list_of_values_2": {
+                "1": "test1",
+                "2": 501,
+                "3": {0: "test2", "second_int": 1, 2: 2, 3: 55},
+            },
+            "hello": {0: "test10", 1: 600, 2: "test11"},
+        }
+    except AssertionError:
+        if sys.version_info[0] == 3 and sys.version_info[1] < 6:
+            # Workaround for earlier versions of python 3 not having sortable dicts
+            assert v.normalized_as_dict(document, allow_name_conflicts=True) == {
+                "hello": {
+                    "1": "test1",
+                    "2": 501,
+                    "3": {0: "test2", "second_int": 1, 2: 2, 3: 55},
+                },
+                "list_of_values": {0: "test10", 1: 600, 2: "test11"},
+            }
+
     assert v.errors == {}
