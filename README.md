@@ -84,10 +84,13 @@ By default they are given a key equalled to their list index.
 >>>         ],
 >>>     }
 >>> }
+
 >>> v = Validator(schema)
 >>> v.normalized_as_dict(document)
 {"fruits": {0: "Apple", 1: 5, 2: "High"}}
 ```
+
+##### Naming indexes
 
 However by using the `name` rule, lists can be assigned to a namable dict. Note that this is different to `rename`
 and should be preferred when using the dictionary normalization as rename can produce adverse effects.
@@ -105,10 +108,13 @@ and should be preferred when using the dictionary normalization as rename can pr
 >>>         ],
 >>>     }
 >>> }
+
 >>> v = Validator(schema)
 >>> v.normalized_as_dict(document)
 {'fruits': {'type': 'Apple', 'count': 5, 'quality': 'High'}}
 ```
+
+##### Allowing name conflicts
 
 By default, conflicting names will throw an error. 
 However, `allow_name_conflicts` can be specified to ignore the error. 
@@ -125,20 +131,87 @@ In this case, previous assignments will be overwritten without error
 >>>         ],
 >>>     }
 >>> }
+
 >>> v = Validator(schema)
 >>> v.normalized_as_dict(document)
 AttributeError: `name` rule (`fruit_type`) already in use by another field
+
 >>> v.normalized_as_dict(document, allow_name_conflicts=True)
 {'produce': {'type': 'Orange'}}
 ```
 
 ### Object Mapping
 
-TBC
+Lists can now be normalized as dict additional to the standard cerberus validation. 
+By default they are given a key equalled to their list index. However `name` may be used to rename 
+object property to that provided. (ensuring the name is a valid python variable name)
+
+```python
+>>> document = {"produce": ["Apple", 5, "High"], "supplier": ["Greg", "United Kingdom", 7.34]}
+>>> schema = {
+>>>     "produce": {
+>>>         "type": "list",
+>>>         "name": "fruits",
+>>>         "items": [
+>>>             {"name": "type", "type": "string"},
+>>>             {"name": "count", "type": "integer", "min": 0},
+>>>             {"name": "quality", "type": "string"},
+>>>         ],
+>>>     },
+>>>     "supplier": {
+>>>         "type": "list",
+>>>         "items": [
+>>>             {"type": "string"},
+>>>             {"type": "string"},
+>>>             {"type": "string", "coerce": int},
+>>>         ],
+>>>     },
+>>> }
+
+>>> v = Validator(schema)
+>>> obj = v.normalized_as_object(document)
+
+>>> obj.fruits.type  # note produce has been renamed to fruits
+'Apple'
+>>> obj.fruits.quality
+'High'
+obj.supplier[0]
+'Greg'
+obj.supplier[2]  # w/ coerce as int rule applied
+7
+```
+
+##### Allowing callable properties for unassigned names
+
+Array values without a `name` property can also be callable by using `callable_numbers`. This is places an underscore
+before the key index such that it can be called as a property of an object rather than by index.
+
+```python
+>>> document = ["Greg", "United Kingdom", 7.34]
+>>> schema = {
+>>>    "type": "list",
+>>>    "items": [
+>>>        {"type": "string"},
+>>>        {"type": "string", "name": "country"},
+>>>        {"type": "string", "coerce": int},
+>>>    ],
+>>>}
+
+>>> v = Validator(schema)
+>>> obj = v.normalized_as_object(document, callable_numbers=True)
+
+>>> obj._0
+'Greg'
+>>> obj._1  # value renamed to country
+
+>>> obj.country
+'United Kingdom'
+>>> obj._2
+7
+```
 
 ## Cerberus
 
-More information about Cerberus and its validators can be found in their documentation
- @ https://github.com/pyeve/cerberus
+More information about Cerberus and its validators can be found on their GitHub page @ https://github.com/pyeve/cerberus
 
 Complete documentation for Cerberus is available at http://docs.python-cerberus.org
