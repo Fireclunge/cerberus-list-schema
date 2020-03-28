@@ -175,9 +175,9 @@ object property to that provided. (ensuring the name is a valid python variable 
 'Apple'
 >>> obj.fruits.quality
 'High'
-obj.supplier[0]
+>>> obj.supplier[0]
 'Greg'
-obj.supplier[2]  # w/ coerce as int rule applied
+>>> obj.supplier[2]  # w/ coerce as int rule applied
 7
 ```
 
