@@ -105,3 +105,41 @@ def test_normalization_rules_work_no_validator_init():
     v = Validator(purge_unknown=True)
     assert v.normalized(document, schema) == expected_document
     assert v.errors == {}
+
+
+def test_readable_schema():
+    document = {"produce": ["Apple", 5, "High"]}
+    schema = {
+        "produce": {
+            "type": "list",
+            "name": "fruits",
+            "items": [
+                {"type": "string"},
+                {"type": "integer", "min": 0},
+                {"type": "string"},
+            ],
+        }
+    }
+    v = Validator(schema)
+    assert v.normalized_as_dict(document) == {"fruits": {0: "Apple", 1: 5, 2: "High"}}
+    assert v.errors == {}
+
+
+def test_readable_schema_wrong_naming():
+    document = {"produce": ["Apple", 5, "High"]}
+    schema = {
+        "unknown": {
+            "type": "list",
+            "name": "fruits",
+            "items": [
+                {"type": "string"},
+                {"type": "integer", "min": 0},
+                {"type": "string"},
+            ],
+        }
+    }
+    v = Validator(schema)
+    assert v.validate(document) is False
+    assert v.errors == {"produce": ["unknown field"]}
+    assert v.normalized_as_dict(document) == {"produce": {0: "Apple", 1: 5, 2: "High"}}
+    assert v.errors == {}

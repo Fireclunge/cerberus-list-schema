@@ -72,7 +72,7 @@ class Validator(CerberusValidator):
             elif isinstance(array, list):
                 try:
                     return current_schema["items"][k]
-                except IndexError:
+                except (IndexError, KeyError):
                     return {}
 
         def _replace_values(k, v, allow_name_conflicts=False, callable_numbers=False):
