@@ -5,6 +5,7 @@ from cerberus_list_schema.tests.test_data.utils import (
     get_simple_dict_schema,
     get_simple_list_schema,
 )
+from cerberus import Validator as CerberusValidator
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -356,3 +357,51 @@ def test_extended_dict_validation_works_no_schema_init():
     print(v.errors)
     assert v.validate(document, schema) is True
     assert v.errors == {}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def test_coerce_rules_work_in_list():
+
+    schema = {
+        "list_of_values": {
+            "type": "list",
+            "items": [
+                {"type": "string", "coerce": str},
+                {"type": "integer", "coerce": int},
+            ],
+        }
+    }
+
+    document = {"list_of_values": [123, "987"]}
+
+    v = Validator()
+    assert v.validate(document, schema) is True
+    assert v.errors == {}
+    assert v.normalized_as_dict(document, schema) == {
+        "list_of_values": {0: "123", 1: 987}
+    }
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def test_custom_coerce_rules_work_in_list():
+    def multiply(value):
+        return value * 2
+
+    schema = {
+        "list_of_values": {
+            "type": "list",
+            "items": [{"type": "integer", "coerce": multiply}],
+        }
+    }
+
+    document = {"list_of_values": [2]}
+
+    v = Validator(schema)
+    assert v.validate(document) is True
+    assert v.errors == {}
+    assert v.normalized(document) == {"list_of_values": [4]}
+    assert v.normalized_as_dict(document) == {"list_of_values": {0: 4}}
