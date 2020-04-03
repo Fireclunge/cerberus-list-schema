@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from cerberus import Validator as CerberusValidator, errors
+from cerberus.schema import DefinitionSchema
 from munch import DefaultMunch
 
 
@@ -185,6 +186,13 @@ class Validator(CerberusValidator):
             schema = self._schema
         if self._is_list_schema:
             document = self._parse_list_document(document)
+            if isinstance(schema, DefinitionSchema):
+                if (
+                    len(schema.schema["_schema"]["items"]) != len(document["_schema"])
+                ) and self.allow_list_missing:
+                    schema_items = schema.schema["_schema"]["items"]
+                    schema_items = schema_items[0 : len(document["_schema"])]
+                    schema.schema["_schema"]["items"] = schema_items
         return super(Validator, self).validate(document, schema, update, normalize)
 
     def normalized(self, document, schema=None, always_return_document=False):

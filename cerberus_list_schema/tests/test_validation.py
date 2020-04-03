@@ -5,7 +5,6 @@ from cerberus_list_schema.tests.test_data.utils import (
     get_simple_dict_schema,
     get_simple_list_schema,
 )
-from cerberus import Validator as CerberusValidator
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -387,7 +386,7 @@ def test_coerce_rules_work_in_list():
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-def test_custom_coerce_rules_work_in_list():
+def test_dict_custom_coerce_rules_work_in_list():
     def multiply(value):
         return value * 2
 
@@ -405,3 +404,57 @@ def test_custom_coerce_rules_work_in_list():
     assert v.errors == {}
     assert v.normalized(document) == {"list_of_values": [4]}
     assert v.normalized_as_dict(document) == {"list_of_values": {0: 4}}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def test_list_custom_coerce_rules_work_in_list():
+    def multiply(value):
+        return value * 2
+
+    schema = {"type": "list", "items": [{"type": "integer", "coerce": multiply}]}
+
+    document = [2]
+
+    v = Validator(schema)
+    assert v.validate(document) is True
+    assert v.errors == {}
+    assert v.normalized(document) == [4]
+    assert v.normalized_as_dict(document) == {0: 4}
+
+
+def test_list_lambda_coerce_rules_work_in_list():
+    schema = {
+        "type": "list",
+        "items": [
+            {"type": "integer", "coerce": lambda x: x * 2},
+            {"type": "integer", "coerce": lambda x: int(x * 6)},
+        ],
+    }
+
+    document = [2, 1.5]
+
+    v = Validator(schema)
+    assert v.validate(document) is True
+    assert v.errors == {}
+    assert v.normalized(document) == [4, 9]
+    assert v.normalized_as_dict(document) == {0: 4, 1: 9}
+
+
+def test_coerce_rules_work_in_list_thats_exceeded_len():
+    schema = {
+        "type": "list",
+        "items": [
+            {"type": "integer", "coerce": lambda x: x * 2},
+            {"type": "integer", "coerce": lambda x: int(x * 6)},
+        ],
+    }
+
+    document = [2]
+
+    v = Validator(schema, allow_list_missing=True)
+    assert v.validate(document) is True
+    assert v.errors == {}
+    assert v.normalized(document) == [4]
+    assert v.normalized_as_dict(document) == {0: 4}
