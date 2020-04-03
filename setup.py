@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cerberus-list-schema",
-    version="1.0.1",
+    version="1.0.2",
     author="Amy Summers",
     author_email="amy@sakuradigital.co.uk",
     description="Cerburus based validation extended to support list schemas and "
