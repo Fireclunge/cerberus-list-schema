@@ -48,6 +48,14 @@ class Validator(CerberusValidator):
                 int(str(new_name)[0])
             except ValueError:
                 pass
+            except IndexError:
+                if str(new_name).strip() == "":
+                    raise ValueError(
+                        "`name` rule (`{0}`) in provided schema is not valid as it is blank. "
+                        "Make sure it is a valid name for a python variable.".format(
+                            new_name
+                        )
+                    )
             else:
                 raise ValueError(
                     "`name` rule (`{0}`) in provided schema is not valid as it begins with a number. "
