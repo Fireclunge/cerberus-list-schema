@@ -224,7 +224,10 @@ class Validator(CerberusValidator):
             self.normalized(document, schema, always_return_document)
         )
         if schema is None:
-            schema = self._original_schema
+            try:
+                schema = self._original_schema
+            except AttributeError:
+                raise AttributeError("Schema not found. Perhaps it wasn't loaded.")
         if isinstance(document, dict):
             schema = {"schema": schema}
         self._allow_name_conflicts = allow_name_conflicts
