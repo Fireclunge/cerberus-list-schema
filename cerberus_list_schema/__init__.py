@@ -193,6 +193,13 @@ class Validator(CerberusValidator):
                     schema_items = schema.schema["_schema"]["items"]
                     schema_items = schema_items[0 : len(document["_schema"])]
                     schema.schema["_schema"]["items"] = schema_items
+            elif isinstance(schema, dict):
+                if (
+                    len(schema["_schema"]["items"]) != len(document["_schema"])
+                ) and self.allow_list_missing:
+                    schema_items = schema["_schema"]["items"]
+                    schema_items = schema_items[0 : len(document["_schema"])]
+                    schema["_schema"]["items"] = schema_items
         return super(Validator, self).validate(document, schema, update, normalize)
 
     def normalized(self, document, schema=None, always_return_document=False):
